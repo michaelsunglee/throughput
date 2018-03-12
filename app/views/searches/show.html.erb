@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Artist:</strong>
+  <%= @search.artist_id %>
+</p>
+
+<p>
+  <strong>Album:</strong>
+  <%= @search.album_id %>
+</p>
+
+<p>
+  <strong>Score:</strong>
+  <%= @search.score %>
+</p>
+
+<p>
+  <strong>Datetime:</strong>
+  <%= @search.datetime %>
+</p>
+
+<%= link_to 'Edit', edit_search_path(@search) %> |
+<%= link_to 'Back', searches_path %>
