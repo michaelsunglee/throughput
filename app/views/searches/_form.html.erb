@@ -1,4 +1,4 @@
-<%= form_with(model: search, local: true) do |form| %>
+<%= form_with model: search, local: true, class: "form-group mb-3" do |form| %>
   <% if search.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(search.errors.count, "error") %> prohibited this search from being saved:</h2>
@@ -11,17 +11,15 @@
     </div>
   <% end %>
 
-  <div class="field">
-    <%= form.label :artist_id %>
-    <%= form.text_field :artist_id, id: :search_artist_id %>
+  <div class="field form-group">
+    <%= form.text_field :artist, placeholder: "Artist", class: "form-control" %>
   </div>
 
-  <div class="field">
-    <%= form.label :album_id %>
-    <%= form.text_field :album_id, id: :search_album_id %>
+  <div class="field form-group">
+    <%= form.text_field :album, placeholder: "Album", class: "form-control" %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit "Search", class: "btn btn-success"%>
   </div>
 <% end %>
