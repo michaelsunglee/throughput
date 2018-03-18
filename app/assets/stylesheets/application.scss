@@ -1,2 +1,24 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.title {
+	font-size: 80px;
+	text-align: center;
+	padding: 100px;
+	padding-top: 100px;
+	color: white;
+}
+
+.col-centered {
+    float: none;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.btn-success, .btn-success:hover, .btn-success:active, .btn-success:visited {
+    background-color: #1ED760 !important;
+}
+
+body {
+	background-color: black;
+}

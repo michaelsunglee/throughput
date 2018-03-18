@@ -11,15 +11,21 @@
     </div>
   <% end %>
 
-  <div class="field form-group">
-    <%= form.text_field :artist, placeholder: "Artist", class: "form-control" %>
+  <div class="row">
+    <div class="field form-group col-md-4 col-md-offset-4">
+      <%= form.text_field :artist, placeholder: "Artist", class: "form-control justify-content-center" %>
+    </div>
   </div>
 
-  <div class="field form-group">
-    <%= form.text_field :album, placeholder: "Album", class: "form-control" %>
+  <div class="row">
+    <div class="field form-group col-md-4 col-md-offset-4">
+      <%= form.text_field :album, placeholder: "Album", class: "form-control" %>
+    </div>
   </div>
 
-  <div class="actions">
-    <%= form.submit "Search", class: "btn btn-success"%>
+  <div class="row">
+    <div class="actions col-md-1 col-centered">
+      <%= form.submit "Search", class: "btn btn-success btn-lg"%>
+    </div>
   </div>
 <% end %>
