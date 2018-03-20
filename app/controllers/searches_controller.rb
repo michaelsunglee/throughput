@@ -106,11 +106,25 @@ class SearchesController < ApplicationController
     end
 
     def calculate_score(album_name)
-      album = find_album(album_name)
+      tracks = find_album(album_name).tracks
+      mean = album_mean_popularity(tracks)
+      calculate_variance(tracks, mean)
+    end
+
+    def album_mean_popularity(tracks)
       total_popularity = 0
-      album.tracks.each do |track|
+      tracks.each do |track|
         total_popularity += track.popularity
       end
-      total_popularity/album.tracks.length
+      total_popularity/tracks.length
+    end
+
+    def calculate_variance(tracks, mean)
+      total = 0
+      tracks.each do |track|
+        difference = track.popularity - mean
+        total += difference ** 2
+      end
+      total/(tracks.length-1)
     end
 end
