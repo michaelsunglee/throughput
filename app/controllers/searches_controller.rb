@@ -12,6 +12,8 @@ class SearchesController < ApplicationController
   def show
     @artist = @search.artist
     @album = @search.album
+    @score = @search.score
+    # @album_art =
   end
 
   # GET /searches/new
@@ -27,6 +29,7 @@ class SearchesController < ApplicationController
   # POST /searches.json
   def create
     search_params = create_search(params)
+    # TODO: Add a GET for album art here
 
     @search = Search.new(search_params)
 
