@@ -1,5 +1,5 @@
 class SearchesController < ApplicationController
-  before_action :set_search, only: [:show, :edit, :update, :destroy]
+  before_action :set_search, only: %i[show edit update destroy]
 
   # GET /searches
   # GET /searches.json
@@ -21,14 +21,10 @@ class SearchesController < ApplicationController
     @search = Search.new
   end
 
-  # GET /searches/1/edit
-  def edit
-  end
-
   # POST /searches
   # POST /searches.json
   def create
-    search_params = create_search(params)
+    search_params = create_search
     # TODO: Add a GET for album art here
 
     @search = Search.new(search_params)
@@ -69,65 +65,63 @@ class SearchesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_search
-      @search = Search.find(params[:id])
+
+  def set_search
+    @search = Search.find(params[:id])
+  end
+
+  def search_params
+    params.require(:search).permit(:artist_id, :album_id, :score, :datetime)
+  end
+
+  def authenticate_rspotify_client
+    RSpotify::authenticate(Rails.application.secrets.rspotify_client,
+                          Rails.application.secrets.rspotify_secret)
+  end
+
+  def create_search
+    authenticate_rspotify_client
+    artist = params['search']['artist']
+    album = params['search']['album']
+
+    params = {}
+    params[:artist_id] = find_artist(artist).id
+    params[:album_id] = find_album(album).id
+    params[:artist] = artist
+    params[:album] = album
+    params[:score] = calculate_score(album)
+    params[:datetime] = Time.now
+    params
+  end
+
+  def find_artist(artist)
+    RSpotify::Artist.search(artist).first
+  end
+
+  def find_album(album)
+    RSpotify::Album.search(album).first
+  end
+
+  def calculate_score(album_name)
+    tracks = find_album(album_name).tracks
+    mean = album_mean_popularity(tracks)
+    calculate_variance(tracks, mean)
+  end
+
+  def album_mean_popularity(tracks)
+    total_popularity = 0
+    tracks.each do |track|
+      total_popularity += track.popularity
     end
+    total_popularity/tracks.length
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def search_params
-      params.require(:search).permit(:artist_id, :album_id, :score, :datetime)
+  def calculate_variance(tracks, mean)
+    total = 0
+    tracks.each do |track|
+      difference = track.popularity - mean
+      total += difference**2
     end
-
-    def authenticate_rspotify_client
-      RSpotify::authenticate(Rails.application.secrets.rspotify_client,
-                            Rails.application.secrets.rspotify_secret)
-    end
-
-    def create_search(params)
-      authenticate_rspotify_client
-      artist = params['search']['artist']
-      album = params['search']['album']
-
-      params = {}
-
-      params[:artist_id] = find_artist(artist).id
-      params[:album_id] = find_album(album).id
-      params[:artist] = artist
-      params[:album] = album
-      params[:score] = calculate_score(album)
-      params[:datetime] = Time.now
-      params
-    end
-
-    def find_artist(artist)
-      RSpotify::Artist.search(artist).first
-    end
-
-    def find_album(album)
-      RSpotify::Album.search(album).first
-    end
-
-    def calculate_score(album_name)
-      tracks = find_album(album_name).tracks
-      mean = album_mean_popularity(tracks)
-      calculate_variance(tracks, mean)
-    end
-
-    def album_mean_popularity(tracks)
-      total_popularity = 0
-      tracks.each do |track|
-        total_popularity += track.popularity
-      end
-      total_popularity/tracks.length
-    end
-
-    def calculate_variance(tracks, mean)
-      total = 0
-      tracks.each do |track|
-        difference = track.popularity - mean
-        total += difference ** 2
-      end
-      total/(tracks.length-1)
-    end
+    total / (tracks.length - 1)
+  end
 end
