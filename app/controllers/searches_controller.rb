@@ -1,14 +1,10 @@
 class SearchesController < ApplicationController
   before_action :set_search, only: %i[show edit update destroy]
 
-  # GET /searches
-  # GET /searches.json
   def index
     @searches = Search.all
   end
 
-  # GET /searches/1
-  # GET /searches/1.json
   def show
     @artist = @search.artist
     @album = @search.album
@@ -16,13 +12,10 @@ class SearchesController < ApplicationController
     @image = @search.image
   end
 
-  # GET /searches/new
   def new
     @search = Search.new
   end
 
-  # POST /searches
-  # POST /searches.json
   def create
     search_params = create_search
 
@@ -39,8 +32,6 @@ class SearchesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /searches/1
-  # PATCH/PUT /searches/1.json
   def update
     respond_to do |format|
       if @search.update(search_params)
@@ -53,8 +44,6 @@ class SearchesController < ApplicationController
     end
   end
 
-  # DELETE /searches/1
-  # DELETE /searches/1.json
   def destroy
     @search.destroy
     respond_to do |format|
