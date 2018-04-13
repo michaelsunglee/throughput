@@ -93,7 +93,6 @@ class SearchesController < ApplicationController
     search[:album_id] = album_object.id
     search[:image] = get_image_url(album_object.images)
     search[:score] = calculate_score(album)
-    search[:datetime] = Time.now
     search
   end
 
