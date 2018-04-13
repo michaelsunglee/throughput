@@ -10,15 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180317224919) do
+ActiveRecord::Schema.define(version: 2018_04_13_035501) do
 
   create_table "searches", force: :cascade do |t|
     t.string "artist_id"
     t.string "album_id"
     t.float "score"
-    t.datetime "datetime"
     t.string "artist"
     t.string "album"
+    t.string "image"
+    t.datetime "datetime"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
