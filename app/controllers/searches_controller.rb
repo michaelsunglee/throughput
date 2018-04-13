@@ -112,7 +112,9 @@ class SearchesController < ApplicationController
   def calculate_score(album_name)
     tracks = find_album(album_name).tracks
     mean = album_mean_popularity(tracks)
-    calculate_variance(tracks, mean)
+    standard_deviation = calculate_standard_deviation(tracks, mean)
+    score = normalize_score(standard_deviation)
+    format_score(score)
   end
 
   def album_mean_popularity(tracks)
@@ -120,15 +122,24 @@ class SearchesController < ApplicationController
     tracks.each do |track|
       total_popularity += track.popularity
     end
-    total_popularity/tracks.length
+    total_popularity / tracks.length
   end
 
-  def calculate_variance(tracks, mean)
+  def calculate_standard_deviation(tracks, mean)
     total = 0
     tracks.each do |track|
       difference = track.popularity - mean
       total += difference**2
     end
-    total / (tracks.length - 1)
+    Math.sqrt(total / (tracks.length - 1))
+  end
+
+  def normalize_score(standard_deviation)
+    (standard_deviation / 50) * 100
+  end
+
+  def format_score(score)
+    score = 100 - score
+    score.round(2)
   end
 end
