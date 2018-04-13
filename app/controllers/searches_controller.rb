@@ -13,7 +13,7 @@ class SearchesController < ApplicationController
     @artist = @search.artist
     @album = @search.album
     @score = @search.score
-    # @album_art =
+    @image = @search.image
   end
 
   # GET /searches/new
@@ -25,7 +25,6 @@ class SearchesController < ApplicationController
   # POST /searches.json
   def create
     search_params = create_search
-    # TODO: Add a GET for album art here
 
     @search = Search.new(search_params)
 
@@ -81,17 +80,21 @@ class SearchesController < ApplicationController
 
   def create_search
     authenticate_rspotify_client
+    search = {}
     artist = params['search']['artist']
     album = params['search']['album']
+    search[:artist] = artist
+    search[:album] = album
 
-    params = {}
-    params[:artist_id] = find_artist(artist).id
-    params[:album_id] = find_album(album).id
-    params[:artist] = artist
-    params[:album] = album
-    params[:score] = calculate_score(album)
-    params[:datetime] = Time.now
-    params
+    artist_object = find_artist(artist)
+    album_object = find_album(album)
+
+    search[:artist_id] = artist_object.id
+    search[:album_id] = album_object.id
+    search[:image] = get_image_url(album_object.images)
+    search[:score] = calculate_score(album)
+    search[:datetime] = Time.now
+    search
   end
 
   def find_artist(artist)
@@ -100,6 +103,11 @@ class SearchesController < ApplicationController
 
   def find_album(album)
     RSpotify::Album.search(album).first
+  end
+
+  def get_image_url(images)
+    # The Spotify images array will have 3 pre-determined image sizes or none
+    images.second['url'] || ''
   end
 
   def calculate_score(album_name)
