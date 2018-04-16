@@ -1,24 +1,5 @@
-# README
+# Throughput
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Throughput measures the 'playability' of an album. It takes the popularity of each of the songs and calculates their statistical standard deviation. The popularity of an album has no effect on its throughput score. 
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+This is to highlight how different albums reflect different listening habits, and rewards those where people tend to listen all the way through. 
