@@ -18,7 +18,6 @@ class SearchesController < ApplicationController
 
   def create
     search_params = create_search
-
     @search = Search.new(search_params)
 
     respond_to do |format|
