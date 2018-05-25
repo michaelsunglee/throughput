@@ -1,4 +1,5 @@
-<%= form_with method: :get, url: find_artist_path, class: "form-group mb-3" do |form| %>
+<%= form_with method: :post, url: artists_path, class: "form-group mb-3" do |form| %>
+
   <div class="field form-group col-md-4 col-md-offset-4">
     <%= form.text_field :artist, id: "artist-field", class: "form-control justify-content-center", 
     placeholder: "Artist", autocomplete: "off", onkeyup: "queryChange(this.value)" %>

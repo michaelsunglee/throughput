@@ -9,7 +9,10 @@
   </head>
 
   <body class="all">
-    <%= yield %>
-    <%= yield :javascript %>
+    <div class="container home">
+      <h1 class="main-title">Throughput</h1>
+        <%= yield %>
+        <%= yield :javascript %>
+    </div>
   </body>
 </html>
