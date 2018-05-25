@@ -8,12 +8,10 @@ class ArtistsController < ApplicationController
 
   def create
     @image = show_artists
-    # render template: "/artists/index.html.erb"
     respond_to do |format|
       if @image
         session[:artist_image_url] = @image
         format.html { redirect_to action: :index }
-        # format.json { render :index }
       end
     end
   end

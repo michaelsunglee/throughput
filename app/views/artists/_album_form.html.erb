@@ -1,0 +1,19 @@
+<%= form_with url: searches_path, class: "form-group mb-3" do |form| %>
+
+  <div class="field form-group col-md-4 col-md-offset-4">
+    <%= form.text_field :album, id: "album-field", class: "form-control justify-content-center", 
+    placeholder: "Album", autocomplete: "off", onkeyup: "queryChange(this.value)" %>
+  </div>
+
+  <div class="actions col-md-1 col-centered">
+    <%= form.submit "Search", id: "search-album-button", class: "btn btn-success btn-lg", disabled: true %>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    function queryChange(query) {
+      $('#search-album-button').prop('disabled', query.length == 0);
+    }
+  </script>
+<% end %>
