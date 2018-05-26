@@ -18,9 +18,12 @@ class ArtistsController < ApplicationController
 
   def show_artists
     authenticate_rspotify_client
-    artist = params[:artist]
-    main = RSpotify::Artist.search(artist).first
-    get_image_url(main.images)
+    artist_query = params[:artist]
+    # TODO: find artist abstraction
+    artist = RSpotify::Artist.search(artist_query).first
+    session[:artist] = artist_query
+    session[:artist_id] = artist.id
+    get_image_url(artist.images)
   end
 
   private

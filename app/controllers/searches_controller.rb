@@ -18,6 +18,7 @@ class SearchesController < ApplicationController
 
   def create
     search_params = create_search
+    puts "params are #{search_params}"
     @search = Search.new(search_params)
 
     respond_to do |format|
@@ -69,27 +70,28 @@ class SearchesController < ApplicationController
   def create_search
     authenticate_rspotify_client
     search = {}
-    artist = params['search']['artist']
-    album = params['search']['album']
-    search[:artist] = artist
-    search[:album] = album
-
-    artist_object = find_artist(artist)
+    album = params['album']
     album_object = find_album(album)
 
-    search[:artist_id] = artist_object.id
+    session[:artist_id] = session[:artist_id]
+    search[:artist] = session[:artist]
     search[:album_id] = album_object.id
+    search[:album] = album
     search[:image] = get_image_url(album_object.images)
     search[:score] = calculate_score(album)
     search
   end
 
-  def find_artist(artist)
-    RSpotify::Artist.search(artist).first
-  end
+  # def find_artist(artist)
+  #   RSpotify::Artist.search(artist).first
+  # end
 
-  def find_album(album)
-    RSpotify::Album.search(album).first
+  def find_album(album_query)
+    artist = RSpotify::Artist.search(session[:artist]).first
+    matching = artist.albums.select { |album| album.name == album_query }
+    # TODO: fuzzy matching
+    matching.first
+    # RSpotify::Album.search(album).first
   end
 
   def get_image_url(images)
