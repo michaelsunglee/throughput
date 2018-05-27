@@ -11,9 +11,16 @@ class ArtistsController < ApplicationController
     respond_to do |format|
       if @image
         session[:artist_image_url] = @image
-        format.html { redirect_to action: :index }
+        format.html { redirect_to controller: :searches, action: :new }
       end
     end
+  end
+
+  private
+
+  def authenticate_rspotify_client
+    RSpotify::authenticate(Rails.application.secrets.rspotify_client,
+                          Rails.application.secrets.rspotify_secret)
   end
 
   def show_artists
@@ -26,15 +33,11 @@ class ArtistsController < ApplicationController
     get_image_url(artist.images)
   end
 
-  private
-
-  def authenticate_rspotify_client
-    RSpotify::authenticate(Rails.application.secrets.rspotify_client,
-                          Rails.application.secrets.rspotify_secret)
-  end
-
   def get_image_url(images)
-    # The Spotify images array will have 3 pre-determined image sizes or none
-    images.second['url'] || ''
+    # The Spotify images array is of various sizes but starts with widest. We
+    # are selecting the image closest yet smaller than a width of 320
+    ideal_images = images.select { |image| image['width'] <= 320 }
+    ideal_image = ideal_images.first || images.second
+    ideal_image['url']
   end
 end

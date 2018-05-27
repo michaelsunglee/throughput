@@ -1,9 +1,40 @@
 <%= form_with url: searches_path, class: "form-group mb-3" do |form| %>
 
-  <div class="field form-group col-md-4 col-md-offset-4">
+  <!-- <div class="field form-group col-md-4 col-md-offset-4">
     <%= form.text_field :album, id: "album-field", class: "form-control justify-content-center", 
     placeholder: "Album", autocomplete: "off", onkeyup: "queryChange(this.value)" %>
+  </div> -->
+
+  <div class="dropdown">
+    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Dropdown button
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="#">Action</a>
+      <a class="dropdown-item" href="#">Another action</a>
+      <a class="dropdown-item" href="#">Something else here</a>
+    </div>
   </div>
+
+  <div class="dropdown">
+    <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">Test</button>
+    <ul class="dropdown-menu">
+      <li><a href="#">test1</a></li>
+      <li><a href="#">test2</a></li>
+    </ul>
+  </div>
+
+  <!-- <ul class="nav navbar-nav navbar-right"> -->
+  <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Menu <span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#">Login</a></li>
+      <li><a href="#">Login</a></li>
+      <!-- <li class="divider"></li>
+      <li><%= link_to 'Create a todo', searches_path %></li> -->
+    </ul>
+  </li>
+<!-- </ul> -->
 
   <div class="actions col-md-1 col-centered">
     <%= form.submit "Search", id: "search-album-button", class: "btn btn-success btn-lg", disabled: true %>

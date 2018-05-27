@@ -1,0 +1,14 @@
+<%= form_with url: searches_path, class: "form-group" do |form| %>
+  <div class="actions col-md-1 col-centered">
+    <div class="dropdown btn-group">
+      <button class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown" type="button">
+        Albums <span class="caret">
+      </button>
+      <ul class="dropdown-menu">
+        <% @albums.each do |album| %>
+          <li><a href="#"><%= album[:name] %></a></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

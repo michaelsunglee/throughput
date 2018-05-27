@@ -6,6 +6,7 @@ class SearchesController < ApplicationController
   end
 
   def show
+    # change?
     @artist = @search.artist
     @album = @search.album
     @score = @search.score
@@ -13,7 +14,10 @@ class SearchesController < ApplicationController
   end
 
   def new
-    @search = Search.new
+    # @search = Search.new
+    @image = session[:artist_image_url]
+    @albums = all_albums
+    puts "albums is: #{@albums}"
   end
 
   def create
@@ -54,6 +58,24 @@ class SearchesController < ApplicationController
 
   private
 
+  def all_albums
+    authenticate_rspotify_client
+    artist = RSpotify::Artist.find(session[:artist_id])
+    format_albums(artist.albums(limit: 12, market: 'US'))
+  end
+
+  def format_albums(albums)
+    formatted_albums = []
+    albums.each do |album|
+      formatted_album = {
+        :id => album.id,
+        :name => album.name
+      }
+      formatted_albums << formatted_album
+    end
+    formatted_albums.uniq! { |formatted_album| formatted_album[:name] }
+  end
+
   def set_search
     @search = Search.find(params[:id])
   end
@@ -68,6 +90,7 @@ class SearchesController < ApplicationController
   end
 
   def create_search
+    # remove this? will be called in get_albums
     authenticate_rspotify_client
     search = {}
     album = params['album']
@@ -94,6 +117,7 @@ class SearchesController < ApplicationController
     # RSpotify::Album.search(album).first
   end
 
+  # TODO: fix this like artist
   def get_image_url(images)
     # The Spotify images array will have 3 pre-determined image sizes or none
     images.second['url'] || ''
