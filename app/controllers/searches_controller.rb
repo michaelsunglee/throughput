@@ -7,6 +7,7 @@ class SearchesController < ApplicationController
 
   def show
     # change?
+    puts "searches show"
     @artist = @search.artist
     @album = @search.album
     @score = @search.score
@@ -17,12 +18,12 @@ class SearchesController < ApplicationController
     # @search = Search.new
     @image = session[:artist_image_url]
     @albums = all_albums
-    puts "albums is: #{@albums}"
   end
 
   def create
+    session[:album_id] = params['album_id']
+    session[:album_name] = params['album_name']
     search_params = create_search
-    puts "params are #{search_params}"
     @search = Search.new(search_params)
 
     respond_to do |format|
@@ -33,26 +34,6 @@ class SearchesController < ApplicationController
         format.html { render :new }
         format.json { render json: @search.errors, status: :unprocessable_entity }
       end
-    end
-  end
-
-  def update
-    respond_to do |format|
-      if @search.update(search_params)
-        format.html { redirect_to @search, notice: 'Search was successfully updated.' }
-        format.json { render :show, status: :ok, location: @search }
-      else
-        format.html { render :edit }
-        format.json { render json: @search.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def destroy
-    @search.destroy
-    respond_to do |format|
-      format.html { redirect_to searches_url, notice: 'Search was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 
@@ -90,31 +71,21 @@ class SearchesController < ApplicationController
   end
 
   def create_search
-    # remove this? will be called in get_albums
-    authenticate_rspotify_client
     search = {}
-    album = params['album']
-    album_object = find_album(album)
+    album_id = session[:album_id]
+    album_object = find_album(album_id)
 
-    session[:artist_id] = session[:artist_id]
+    search[:artist_id] = session[:artist_id]
     search[:artist] = session[:artist]
-    search[:album_id] = album_object.id
-    search[:album] = album
+    search[:album_id] = album_id
+    search[:album] = session[:album_name]
     search[:image] = get_image_url(album_object.images)
-    search[:score] = calculate_score(album)
+    search[:score] = calculate_score(album_object)
     search
   end
 
-  # def find_artist(artist)
-  #   RSpotify::Artist.search(artist).first
-  # end
-
-  def find_album(album_query)
-    artist = RSpotify::Artist.search(session[:artist]).first
-    matching = artist.albums.select { |album| album.name == album_query }
-    # TODO: fuzzy matching
-    matching.first
-    # RSpotify::Album.search(album).first
+  def find_album(album_id)
+    RSpotify::Album.find(album_id)
   end
 
   # TODO: fix this like artist
@@ -123,8 +94,8 @@ class SearchesController < ApplicationController
     images.second['url'] || ''
   end
 
-  def calculate_score(album_name)
-    tracks = find_album(album_name).tracks
+  def calculate_score(album_object)
+    tracks = album_object.tracks
     mean = album_mean_popularity(tracks)
     standard_deviation = calculate_standard_deviation(tracks, mean)
     score = normalize_score(standard_deviation)

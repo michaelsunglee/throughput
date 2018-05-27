@@ -6,7 +6,8 @@
       </button>
       <ul class="dropdown-menu">
         <% @albums.each do |album| %>
-          <li><a href="#"><%= album[:name] %></a></li>
+          <li><%= link_to album[:name], searches_path(:album_id => album[:id], :album_name => album[:name]), method: :post %></li>
+          <!-- <li><a href="#"><%= album[:name] %></a></li> -->
         <% end %>
       </ul>
     </div>
