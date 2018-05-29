@@ -1,10 +1,6 @@
 class SearchesController < ApplicationController
   before_action :set_search, only: %i[show edit update destroy]
 
-  def index
-    @searches = Search.all
-  end
-
   def show
     # change?
     puts "searches show"
@@ -54,6 +50,7 @@ class SearchesController < ApplicationController
       }
       formatted_albums << formatted_album
     end
+    puts "CALLED MULTIPLE TIMES?"
     formatted_albums.uniq! { |formatted_album| formatted_album[:name] }
   end
 
