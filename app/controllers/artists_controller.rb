@@ -19,8 +19,9 @@ class ArtistsController < ApplicationController
   private
 
   def authenticate_rspotify_client
-    RSpotify::authenticate(Rails.application.secrets.rspotify_client,
-                          Rails.application.secrets.rspotify_secret)
+    rspotify_client = Rails.application.config.spotify_credentials[:rspotify_client]
+    rspotify_secret = Rails.application.config.spotify_credentials[:rspotify_secret]
+    RSpotify::authenticate(rspotify_client, rspotify_secret)
   end
 
   def show_artists

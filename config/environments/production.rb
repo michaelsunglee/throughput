@@ -88,4 +88,8 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  config.spotify_credentials = {
+    rspotify_client: ENV['RSPOTIFY_CLIENT'],
+    rspotify_secret: ENV['RSPOTIFY_SECRET']
+  }
 end

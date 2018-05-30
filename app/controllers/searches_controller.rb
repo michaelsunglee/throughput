@@ -50,7 +50,6 @@ class SearchesController < ApplicationController
       }
       formatted_albums << formatted_album
     end
-    puts "CALLED MULTIPLE TIMES?"
     formatted_albums.uniq! { |formatted_album| formatted_album[:name] }
   end
 
@@ -63,8 +62,9 @@ class SearchesController < ApplicationController
   end
 
   def authenticate_rspotify_client
-    RSpotify::authenticate(Rails.application.secrets.rspotify_client,
-                          Rails.application.secrets.rspotify_secret)
+    rspotify_client = Rails.application.config.spotify_credentials[:rspotify_client]
+    rspotify_secret = Rails.application.config.spotify_credentials[:rspotify_secret]
+    RSpotify::authenticate(rspotify_client, rspotify_secret)
   end
 
   def create_search
