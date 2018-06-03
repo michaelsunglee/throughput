@@ -50,7 +50,7 @@ class SearchesController < ApplicationController
       }
       formatted_albums << formatted_album
     end
-    formatted_albums.uniq! { |formatted_album| formatted_album[:name] }
+    formatted_albums.uniq { |formatted_album| formatted_album[:name] }
   end
 
   def set_search
