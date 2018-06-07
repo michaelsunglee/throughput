@@ -1,4 +1,4 @@
-<%= form_with url: searches_path, class: "form-group" do |form| %>
+<%= form_with model: @search, class: "form-group" do |form| %>
   <div class="actions col-md-1 col-centered">
     <div class="dropdown btn-group">
       <button class="btn btn-success btn-lg dropdown-toggle" data-toggle="dropdown" type="button">
@@ -6,7 +6,7 @@
       </button>
       <ul class="dropdown-menu">
         <% @albums.each do |album| %>
-          <li><%= link_to album[:name], searches_path(:album_id => album[:id], :album_name => album[:name]), method: :post %></li>
+          <li><%= link_to album[:album_name], searches_path(:search => album), method: :post %></li>
         <% end %>
       </ul>
     </div>

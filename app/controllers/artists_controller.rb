@@ -3,8 +3,9 @@ class ArtistsController < ApplicationController
 
   before_action :authenticate_rspotify, only: :create
 
-  def index
-    @image = session[:artist_image_url]
+  def new
+    @searched = format_searched(session.fetch(:searched, []))
+    puts "searched is: #{@searched}"
   end
 
   def create

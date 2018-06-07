@@ -5,19 +5,17 @@ class SearchesController < ApplicationController
   before_action :set_search, only: :show
 
   def new
-    # @search = Search.new
+    @search = Search.new
     @image = session[:artist_image_url]
     @albums = all_albums
   end
 
   def create
-    session[:album_id] = params['album_id']
-    session[:album_name] = params['album_name']
-    search_params = create_search
-    @search = Search.new(search_params)
+    @search = create_search
 
     respond_to do |format|
       if @search.save
+        save_search_to_sessions(@search.id)
         format.html { redirect_to @search }
         format.json { render :show, status: :created, location: @search }
       else
@@ -28,12 +26,12 @@ class SearchesController < ApplicationController
   end
 
   def show
-    # change?
-    puts "searches show"
-    @artist = @search.artist
-    @album = @search.album
-    @score = @search.score
-    @image = @search.image
+    puts "show params is: #{params}"
+    @search = Search.find(params[:id])
+    # @artist = session[:artist]
+    # @album = @search.album_name
+    # @score = @search.score
+    # @image = @search.image
   end
 
   private
@@ -47,12 +45,12 @@ class SearchesController < ApplicationController
     formatted_albums = []
     albums.each do |album|
       formatted_album = {
-        :id => album.id,
-        :name => album.name
+        :album_id => album.id,
+        :album_name => album.name
       }
       formatted_albums << formatted_album
     end
-    formatted_albums.uniq { |formatted_album| formatted_album[:name] }
+    formatted_albums.uniq { |formatted_album| formatted_album[:album_name] }
   end
 
   def set_search
@@ -60,21 +58,39 @@ class SearchesController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:artist_id, :album_id, :score, :datetime)
+    params.require(:search).permit(:artist_id, :album_id)
   end
 
   def create_search
+    search = Search.new(search_params)
+    search.artist_id = session[:artist_id]
+    search.artist = session[:artist]
+
+    album = find_album_by_id(search.album_id)
+    search.album = album.name
+    search.image = get_image_url(album.images)
+    search.score = calculate_score(album)
+    search
+  end
+
+  def create_search2
+    puts "in create_search. params is: #{params}"
     search = {}
     album_id = session[:album_id]
     album_object = find_album_by_id(album_id)
 
     search[:artist_id] = session[:artist_id]
-    search[:artist] = session[:artist]
     search[:album_id] = album_id
-    search[:album] = session[:album_name]
+    # search[:album] = session[:album_name]
     search[:image] = get_image_url(album_object.images)
     search[:score] = calculate_score(album_object)
     search
+  end
+
+  def save_search_to_sessions(search_id)
+    searched = session.fetch(:searched, [])
+    searched.push(search_id)
+    session[:searched] = searched
   end
 
   def calculate_score(album_object)
