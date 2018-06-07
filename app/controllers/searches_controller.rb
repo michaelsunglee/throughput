@@ -1,14 +1,8 @@
 class SearchesController < ApplicationController
-  before_action :set_search, only: %i[show edit update destroy]
+  include Rspotify
 
-  def show
-    # change?
-    puts "searches show"
-    @artist = @search.artist
-    @album = @search.album
-    @score = @search.score
-    @image = @search.image
-  end
+  before_action :authenticate_rspotify, only: :new
+  before_action :set_search, only: :show
 
   def new
     # @search = Search.new
@@ -33,12 +27,20 @@ class SearchesController < ApplicationController
     end
   end
 
+  def show
+    # change?
+    puts "searches show"
+    @artist = @search.artist
+    @album = @search.album
+    @score = @search.score
+    @image = @search.image
+  end
+
   private
 
   def all_albums
-    authenticate_rspotify_client
-    artist = RSpotify::Artist.find(session[:artist_id])
-    format_albums(artist.albums(limit: 12, market: 'US'))
+    artist = find_artist_by_id(session[:artist_id])
+    format_albums(artist.albums(limit: 15, market: 'US'))
   end
 
   def format_albums(albums)
@@ -61,16 +63,10 @@ class SearchesController < ApplicationController
     params.require(:search).permit(:artist_id, :album_id, :score, :datetime)
   end
 
-  def authenticate_rspotify_client
-    rspotify_client = Rails.application.config.spotify_credentials[:rspotify_client]
-    rspotify_secret = Rails.application.config.spotify_credentials[:rspotify_secret]
-    RSpotify::authenticate(rspotify_client, rspotify_secret)
-  end
-
   def create_search
     search = {}
     album_id = session[:album_id]
-    album_object = find_album(album_id)
+    album_object = find_album_by_id(album_id)
 
     search[:artist_id] = session[:artist_id]
     search[:artist] = session[:artist]
@@ -79,16 +75,6 @@ class SearchesController < ApplicationController
     search[:image] = get_image_url(album_object.images)
     search[:score] = calculate_score(album_object)
     search
-  end
-
-  def find_album(album_id)
-    RSpotify::Album.find(album_id)
-  end
-
-  # TODO: fix this like artist
-  def get_image_url(images)
-    # The Spotify images array will have 3 pre-determined image sizes or none
-    images.second['url'] || ''
   end
 
   def calculate_score(album_object)
@@ -117,7 +103,7 @@ class SearchesController < ApplicationController
   end
 
   def normalize_score(standard_deviation)
-    (standard_deviation / 50) * 100
+    standard_deviation * 2
   end
 
   def format_score(score)
