@@ -26,12 +26,7 @@ class SearchesController < ApplicationController
   end
 
   def show
-    puts "show params is: #{params}"
     @search = Search.find(params[:id])
-    # @artist = session[:artist]
-    # @album = @search.album_name
-    # @score = @search.score
-    # @image = @search.image
   end
 
   private
@@ -73,23 +68,9 @@ class SearchesController < ApplicationController
     search
   end
 
-  def create_search2
-    puts "in create_search. params is: #{params}"
-    search = {}
-    album_id = session[:album_id]
-    album_object = find_album_by_id(album_id)
-
-    search[:artist_id] = session[:artist_id]
-    search[:album_id] = album_id
-    # search[:album] = session[:album_name]
-    search[:image] = get_image_url(album_object.images)
-    search[:score] = calculate_score(album_object)
-    search
-  end
-
   def save_search_to_sessions(search_id)
     searched = session.fetch(:searched, [])
-    searched.push(search_id)
+    searched.unshift(search_id)
     session[:searched] = searched
   end
 

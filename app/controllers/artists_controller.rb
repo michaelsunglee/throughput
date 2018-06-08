@@ -5,7 +5,6 @@ class ArtistsController < ApplicationController
 
   def new
     @searched = format_searched(session.fetch(:searched, []))
-    puts "searched is: #{@searched}"
   end
 
   def create
@@ -19,6 +18,15 @@ class ArtistsController < ApplicationController
   end
 
   private
+
+  def format_searched(searched)
+    formatted_searched = []
+    searched.each do |id|
+      search = Search.find(id)
+      formatted_searched << search
+    end
+    formatted_searched
+  end
 
   def show_artists
     artist = find_artist_by_name(params[:artist])
