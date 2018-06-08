@@ -53,7 +53,7 @@ class SearchesController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:artist_id, :album_id)
+    params.require(:search).permit(:album_id)
   end
 
   def create_search
@@ -74,8 +74,8 @@ class SearchesController < ApplicationController
     session[:searched] = searched
   end
 
-  def calculate_score(album_object)
-    tracks = album_object.tracks
+  def calculate_score(album)
+    tracks = album.tracks
     mean = album_mean_popularity(tracks)
     standard_deviation = calculate_standard_deviation(tracks, mean)
     score = normalize_score(standard_deviation)
@@ -96,7 +96,7 @@ class SearchesController < ApplicationController
       difference = track.popularity - mean
       total += difference**2
     end
-    Math.sqrt(total / (tracks.length - 1))
+    Math.sqrt(total / tracks.length)
   end
 
   def normalize_score(standard_deviation)
