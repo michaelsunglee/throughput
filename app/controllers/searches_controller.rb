@@ -52,10 +52,6 @@ class SearchesController < ApplicationController
     @search = Search.find(params[:id])
   end
 
-  def search_params
-    params.require(:search).permit(:album_id)
-  end
-
   def create_search
     search = Search.new(search_params)
     search.artist_id = session[:artist_id]
@@ -66,6 +62,10 @@ class SearchesController < ApplicationController
     search.image = get_image_url(album.images)
     search.score = calculate_score(album)
     search
+  end
+
+  def search_params
+    params.require(:search).permit(:album_id)
   end
 
   def save_search_to_sessions(search_id)
